@@ -258,6 +258,9 @@
  '(column-number-mode t)
  '(cursor-color "#657b83")
  '(custom-enabled-themes (quote (tango-dark)))
+ '(cygwin-mount-cygwin-bin-directory "C:\\cygwin64\\bin")
+ '(eclim-eclipse-dirs (quote ("/cygdrive/c/eclipse" "/usr/lib/eclipse" "/usr/local/lib/eclipse" "/usr/share/eclipse")))
+ '(eclim-executable "/cygdrive/c/eclipse/eclim.bat ")
  '(fci-rule-character-color "#452E2E")
  '(fci-rule-color "#452E2E")
  '(foreground-color "#657b83")
@@ -307,4 +310,42 @@
 			
 			;; This removes unsightly ^M characters that would otherwise
 			;; appear in the output of java applications.
-			(add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m))))))
+			(add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
+			(require 'cygwin-mount)
+			(cygwin-mount-activate))))))
+
+;;
+;; eclim
+;;
+(require 'eclim)
+(global-eclim-mode)
+(require 'eclimd)
+
+(setq help-at-pt-display-when-idle t)
+(setq help-at-pt-timer-delay 0.1)
+(help-at-pt-set-timer)
+
+;; regular auto-complete initialization
+(require 'auto-complete-config)
+(ac-config-default)
+
+;; add the emacs-eclim source
+(require 'ac-emacs-eclim-source)
+(ac-emacs-eclim-config)
+
+(require 'company)
+(require 'company-emacs-eclim)
+(company-emacs-eclim-setup)
+(global-company-mode t)
+
+(custom-set-variables
+ '(eclim-eclipse-dirs (quote ("c:/eclipse")))
+ '(eclim-executable "c:/eclipse/eclim.bat"))
+ ;; '(eclimd-executable "c:/apps/x64/dev/ide/eclipse/jee-4.2.1/eclimd.bat")
+ ;; '(eclimd-default-workspace "c:/ws/"))
+
+;; (custom-set-variables
+;;  '(eclim-eclipse-dirs (quote ("c:/apps/x64/dev/ide/eclipse/jee-4.2.1/")))
+;;  '(eclim-executable "c:/apps/x64/dev/ide/eclipse/jee-4.2.1/eclim.bat")
+;;  '(eclimd-executable "c:/apps/x64/dev/ide/eclipse/jee-4.2.1/eclimd.bat")
+;;  '(eclimd-default-workspace "c:/ws/"))
