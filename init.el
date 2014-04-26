@@ -1,4 +1,10 @@
 
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+
+
 ;;;;
 ;; melpa stuff
 ;;;;
@@ -282,7 +288,7 @@
 	(progn
 	  (if (eq system-type 'windows-nt)
 		  (progn
-			(setq default-directory "C:/Users/chris")
+			(setq default-directory "~/")
 			(w32-send-sys-command #xf030)
 			(add-hook 'window-setup-hook (lambda () (tool-bar-mode -1))))
 
