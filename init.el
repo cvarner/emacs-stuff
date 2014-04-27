@@ -1,12 +1,13 @@
-
-(require 'recentf)
-(recentf-mode 1)
-(setq recentf-max-menu-items 25)
-(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+;;todo
+;; - I want certain files always in my 'recent' list
+;; - git isn't working
+;; - error msg, can't find mvn
+;; - can't find grep
+;; - make sure malabar is installed -- don't think libs are built
 
 
 ;;;;
-;; melpa stuff
+;; package load stuff
 ;;;;
 (require 'package)
 (add-to-list 'package-archives
@@ -22,16 +23,6 @@
     (setq requirements (reverse requirements))
     (print requirements))
 
-;;; init.el --- Milkmacs configuration file
-
-;; Turn off mouse interface early in startup to avoid momentary display
-;; (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-
-;; No splash screen please... jeez
-(setq inhibit-startup-screen t)
-
 ;;;; package.el
 (require 'package)
 (setq package-user-dir "~/.emacs.d/elpa/")
@@ -39,22 +30,7 @@
 	     '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
-;; (add-to-list 'package-archives '("melpa-local" . "/Users/dcurtis/src/melpa/packages/") t)
 (package-initialize)
-
-(defun mp-install-rad-packages ()
-  "Install only the sweetest of packages."
-  (interactive)
-  (package-refresh-contents)
-  (mapc '(lambda (package)
-           (unless (package-installed-p package)
-             (package-install package)))
-        '(browse-kill-ring
-          ido-ubiquitous
-          magit
-          paredit
-          smex
-          undo-tree)))
 
 ;;;; macros
 (defmacro after (mode &rest body)
@@ -62,9 +38,6 @@
   (declare (indent defun))
   `(eval-after-load ,mode
      '(progn ,@body)))
-
-;;;; global key bindings
-
 
 ;;;; emacs lisp
 (defun imenu-elisp-sections ()
@@ -84,7 +57,6 @@
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration)
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; The following should *always* be set -- especially for root. Failure to do
 ;;; so can really mess things up.
@@ -100,40 +72,11 @@
 (setq require-final-newline 'ask) ;; If a file doesn't have a \n on the last line, ask if
                                   ;; one should be added; this is essential for editing
                                   ;; system files!!
-
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 (modify-syntax-entry ?_ "w")
 (modify-syntax-entry ?- "w")
-
-
-;; (setq auto-mode-alist
-;;       (append
-;;        '(("\\.C$"    . c++-mode)
-;; 	 ("\\.H$"    . c++-mode)
-;; 	 ("\\.cc$"   . c++-mode)
-;; 	 ("\\.hh$"   . c++-mode)
-;; 	 ("\\.idl$"  . c++-mode)	 
-;; 	 ("\\.c$"    . c-mode)
-;; 	 ("\\.h$"    . c-mode)
-;; 	 ("\\.m$"    . objc-mode)
-;; 	 ("\\.java$" . java-mode)
-;; 	 ("\\.tar$"  . tar-mode)
-;; 	 ("\\.cfg$"  . java-properties-generic-mode)
-;; 	 ("\\.tra$"  . java-properties-generic-mode)	 	 
-;; 	 ) auto-mode-alist))
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; This a cute little feature; make your mouse pointer avoid 
-;; your text cursor (only under windowing systems -- works w/win32)
-;;
-;; (if window-system
-;;    (progn
-;;      (require 'avoid)
-;;      (mouse-avoidance-mode 'jump)))
-;;;
-;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; emacs appends this bozo stuff, so leave it at the bottom
@@ -145,7 +88,7 @@
 
 (setq default-tab-width 4)
 
-(setq version-control t)
+(setq version-control t) ;; @@ revisit this -- there are new settings, don't know if I need this now
 (setq kept-new-versions 1)
 (setq kept-old-versions 1)
 (setq delete-old-versions t)
@@ -159,7 +102,6 @@
 ;;; end-of-line style will be good for Unix.
 ;; (prefer-coding-system 'raw-text-unix)
 ;;;
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -179,6 +121,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; uniquify makes better buffer names
+;; @@ I think this is default behavour in v 24
 (after 'uniquify
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
   (setq uniquify-min-dir-content 2))
@@ -186,7 +129,6 @@
 ;; personal settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; variables
-
 (setq vc-mistrust-permissions t)
 
 (setq search-highlight t)
@@ -205,53 +147,53 @@
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable))
 
 
-;; (defun set-frame-size-according-to-resolution ()
-;;   (interactive)
-;;   (if window-system
-;;   (progn
-;;     ;; use 120 char wide window for largeish displays
-;;     ;; and smaller 80 column windows for smaller displays
-;;     ;; pick whatever numbers make sense for you
-;;     (if (> (x-display-pixel-width) 1280)
-;;            (add-to-list 'default-frame-alist (cons 'width 120))
-;;            (add-to-list 'default-frame-alist (cons 'width 80)))
-;;     ;; for the height, subtract a couple hundred pixels
-;;     ;; from the screen height (for panels, menubars and
-;;     ;; whatnot), then divide by the height of a char to
-;;     ;; get the height we want
-;;     (add-to-list 'default-frame-alist 
-;;          (cons 'height (/ (- (x-display-pixel-height) 55)
-;;                              (frame-char-height)))))))
+(defun cdv-dev-stuff ()
+  (require 'cedet)
+  (require 'semantic)
+  (load "semantic/loaddefs.el")
+  (semantic-mode 1);;
+  (require 'malabar-mode)
+  (add-to-list 'auto-mode-alist '("\\.java\\'" . malabar-mode))      
 
-;; (set-frame-size-according-to-resolution)
+  (setq malabar-groovy-lib-dir "~/src/malabar-mode/target/lib")
+  (setq malabar-groovy-extra-classpath '("~/src/malabar-mode/target/classes"))
+  (add-to-list 'load-path "~/src/malabar-mode/src/main/lisp/")
+  ;;
+  ;; eclim
+  ;;
+  (require 'eclim)
+  (global-eclim-mode)
+  (require 'eclimd)
+
+  (setq help-at-pt-display-when-idle t)
+  (setq help-at-pt-timer-delay 0.1)
+  (help-at-pt-set-timer)
+
+  ;; add the emacs-eclim source
+  (require 'ac-emacs-eclim-source)
+  (ac-emacs-eclim-config)
+
+  (require 'company)
+  (require 'company-emacs-eclim)
+  (company-emacs-eclim-setup)
+  (global-company-mode t))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-hook 'prog-mode-hook 'cdv-dev-stuff)
+
 (setq custom-safe-themes t)
 
 (after 'solarized-theme-autoloads
   (load-theme 'solarized-dark))
 
 (setq backup-directory-alist
-	  `((".*" . ,"~/.emacs.d/auto-save-list/")))
-
+	  `((".*" . ,"~/.auto-save-list/")))
 
 ;;;;;;
 ;;
 ;; Or enable more if you wish
 ;;
 ;;; CEDET
-(require 'cedet)
-(require 'semantic)
-(load "semantic/loaddefs.el")
-(semantic-mode 1);;
-(require 'malabar-mode)
-(add-to-list 'auto-mode-alist '("\\.java\\'" . malabar-mode))      
-;;;
-;;; init.el ends here
 
-
-;;
-;;(require 'color-theme-buffer-local)
-;;   (add-hook 'java-mode 
-;;     (lambda nil (color-theme-buffer-local 'color-theme-robin-hood (current-buffer))))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -271,6 +213,7 @@
  '(fci-rule-color "#452E2E")
  '(foreground-color "#657b83")
  '(tool-bar-mode nil))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -279,74 +222,55 @@
  '(default ((t (:family "Courier New" :foundry "outline" :slant normal :weight normal :height 143 :width normal)))))
 
 
-(setq malabar-groovy-lib-dir "~/src/malabar-mode/target/lib")
-(setq malabar-groovy-extra-classpath '("~/src/malabar-mode/target/classes"))
-(add-to-list 'load-path "~/src/malabar-mode/src/main/lisp/")
-
-
 (if window-system
 	(progn
 	  (if (eq system-type 'windows-nt)
 		  (progn
 			(setq default-directory "~/")
-			(w32-send-sys-command #xf030)
-			(add-hook 'window-setup-hook (lambda () (tool-bar-mode -1))))
+			(w32-send-sys-command #xf030) ;; set window to full screen
+			(add-hook 'window-setup-hook (lambda () (tool-bar-mode -1)))
 
-  ;;;; cygwin support
-  ;;;;  ;; Sets your shell to use cygwin's bash, if Emacs finds it's running
-		;; under Windows and c:\cygwin exists. Assumes that C:\cygwin\bin is
-		;; not already in your Windows Path (it generally should not be).
-		;;
-		(let* ((cygwin-root "c:/cygwin")
-			   (cygwin-bin (concat cygwin-root "/bin")))
-		  (when (and (eq 'windows-nt system-type)
-					 (file-readable-p cygwin-root))
-			
-			(setq exec-path (cons cygwin-bin exec-path))
-			(setenv "PATH" (concat cygwin-bin ";" (getenv "PATH")))
-			
-			;; By default use the Windows HOME.
-			;; Otherwise, uncomment below to set a HOME
-			;;      (setenv "HOME" (concat cygwin-root "/home/eric"))
-			
-			;; NT-emacs assumes a Windows shell. Change to bash.
-			(setq shell-file-name "bash")
-			(setenv "SHELL" shell-file-name) 
-			(setq explicit-shell-file-name shell-file-name) 
-			
-			;; This removes unsightly ^M characters that would otherwise
-			;; appear in the output of java applications.
-			(add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
-			(require 'cygwin-mount)
-			(cygwin-mount-activate))))))
+            ;;;; cygwin support
+			;; Sets your shell to use cygwin's bash, if Emacs finds it's running
+			;; under Windows and c:\cygwin exists. Assumes that C:\cygwin\bin is
+			;; not already in your Windows Path (it generally should not be).
+			;;
+			(if (file-accessible-directory-p "C:\cygwin")
+				(setq cygwin-dir "C:\cygwin")
+			  (if (file-accessible-directory-p "C:\cygwin64")
+				  (setq cygwin-dir "C:\cygwin64")))
 
-;;
-;; eclim
-;;
-(require 'eclim)
-(global-eclim-mode)
-(require 'eclimd)
-
-(setq help-at-pt-display-when-idle t)
-(setq help-at-pt-timer-delay 0.1)
-(help-at-pt-set-timer)
+			(let* ((cygwin-root cygwin-dir)
+				   (cygwin-bin (concat cygwin-root "/bin")))
+			  (when (and (eq 'windows-nt system-type)
+						 (file-readable-p cygwin-root))
+				
+				(setq exec-path (cons cygwin-bin exec-path))
+				(setenv "PATH" (concat cygwin-bin ";" (getenv "PATH")))
+				
+				;; By default use the Windows HOME.
+				;; Otherwise, uncomment below to set a HOME
+				;;      (setenv "HOME" (concat cygwin-root "/home/eric"))
+				
+				;; NT-emacs assumes a Windows shell. Change to bash.
+				(setq shell-file-name "bash")
+				(setenv "SHELL" shell-file-name) 
+				(setq explicit-shell-file-name shell-file-name) 
+				
+				;; This removes unsightly ^M characters that would otherwise
+				;; appear in the output of java applications.
+				(add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
+				(require 'cygwin-mount)
+				(cygwin-mount-activate)))))))
 
 ;; regular auto-complete initialization
 (require 'auto-complete-config)
 (ac-config-default)
 
-;; add the emacs-eclim source
-(require 'ac-emacs-eclim-source)
-(ac-emacs-eclim-config)
 
-(require 'company)
-(require 'company-emacs-eclim)
-(company-emacs-eclim-setup)
-(global-company-mode t)
-
-(custom-set-variables
- '(eclim-eclipse-dirs (quote ("c:/eclipse")))
- '(eclim-executable "c:/eclipse/eclim.bat"))
+;; (custom-set-variables
+;;  '(eclim-eclipse-dirs (quote ("c:/eclipse")))
+;;  '(eclim-executable "c:/eclipse/eclim.bat"))
  ;; '(eclimd-executable "c:/apps/x64/dev/ide/eclipse/jee-4.2.1/eclimd.bat")
  ;; '(eclimd-default-workspace "c:/ws/"))
 
@@ -355,3 +279,127 @@
 ;;  '(eclim-executable "c:/apps/x64/dev/ide/eclipse/jee-4.2.1/eclim.bat")
 ;;  '(eclimd-executable "c:/apps/x64/dev/ide/eclipse/jee-4.2.1/eclimd.bat")
 ;;  '(eclimd-default-workspace "c:/ws/"))
+
+(require 'iedit)
+(require 'auto-complete)
+(require 'auto-complete-config)
+;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;
+;;;; yasnippet stuff
+;;;;
+(require 'yasnippet)
+(yas-global-mode 1)
+
+;; (ac-config-default)
+(defun check-expansion ()
+  (save-excursion
+	(if (looking-at "\\_>") t
+	  (backward-char 1)
+	  (if (looking-at "\\.") t
+		(backward-char 1)
+		(if (looking-at "->") t nil)))))
+
+(defun do-yas-expand ()
+  (let ((yas/fallback-behavior 'return-nil))
+	(yas/expand)))
+
+(defun tab-indent-or-complete ()
+  (interactive)
+  (if (minibufferp)
+	  (minibuffer-complete)
+	(if (or (not yas/minor-mode)
+			(null (do-yas-expand)))
+		(if (check-expansion)
+			(company-complete-common)
+		  (indent-for-tab-command)))))
+
+(global-set-key [tab] 'tab-indent-or-complete)
+;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'magit)
+(require 'winner
+  :config (winner-mode 1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+		 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;;  toggles between horizontal and vertical layout of two windows.
+;;
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Store frequently used files in registers.
+;; Jump to register with: ctrl-x r j
+(dolist
+    (r `((?i (file . "~/.emacs.d/init.el"))
+         (?e (file . "~/.emacs.d"))
+         ))
+  (set-register (car r) (cadr r)))
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(global-set-key (kbd "M-j")
+				(lambda ()
+				  (interactive)
+				  (join-line -1)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; "If you enable Delete Selection mode, a minor mode, then inserting text
+;;  while the mark is active causes the selected text to be deleted first."
+;;
+(delete-selection-mode 1)
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (require 'erc)
+;; (require 'easymenu)
+;;     (easy-menu-add-item  nil '("tools")
+;;       ["IRC with ERC" erc t])
+
+;; (defun try-require (feature)
+;;   (condition-case nil
+;;       (require feature)
+;;     (error (progn
+;;              (message "could not require %s" feature)
+;;              nil))))
+
+;; (when (try-require 'recentf)
+;;   (setq recentf-exclude '("~$"))
+;;   (setq recentf-max-saved-items 99)
+
+
+;; No splash screen please... jeez
+(setq inhibit-startup-screen t)
+
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files)
