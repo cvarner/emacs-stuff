@@ -1,8 +1,8 @@
 ;;todo
-;; - I want certain files always in my 'recent' list
-;; - git isn't working
-;; - error msg, can't find mvn
-;; - can't find grep
+;; X I want certain files always in my 'recent' list
+;; X git isn't working
+;; X error msg, can't find mvn
+;; X can't find grep
 ;; - make sure malabar is installed -- don't think libs are built
 
 
@@ -47,6 +47,8 @@
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
 ;; cdv
+
+(add-to-list 'load-path "~/.emacs.d/elisp")
 
 ;;(show-paren-mode -1)
 (setq cursor-in-non-selected-windows nil)
@@ -206,12 +208,12 @@
  '(column-number-mode t)
  '(cursor-color "#657b83")
  '(custom-enabled-themes (quote (tango-dark)))
- '(cygwin-mount-cygwin-bin-directory "C:\\cygwin64\\bin")
  '(eclim-eclipse-dirs (quote ("/cygdrive/c/eclipse" "/usr/lib/eclipse" "/usr/local/lib/eclipse" "/usr/share/eclipse")))
  '(eclim-executable "/cygdrive/c/eclipse/eclim.bat ")
  '(fci-rule-character-color "#452E2E")
  '(fci-rule-color "#452E2E")
  '(foreground-color "#657b83")
+ '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 
 (custom-set-faces
@@ -228,40 +230,7 @@
 		  (progn
 			(setq default-directory "~/")
 			(w32-send-sys-command #xf030) ;; set window to full screen
-			(add-hook 'window-setup-hook (lambda () (tool-bar-mode -1)))
-
-            ;;;; cygwin support
-			;; Sets your shell to use cygwin's bash, if Emacs finds it's running
-			;; under Windows and c:\cygwin exists. Assumes that C:\cygwin\bin is
-			;; not already in your Windows Path (it generally should not be).
-			;;
-			(if (file-accessible-directory-p "C:\cygwin")
-				(setq cygwin-dir "C:\cygwin")
-			  (if (file-accessible-directory-p "C:\cygwin64")
-				  (setq cygwin-dir "C:\cygwin64")))
-
-			(let* ((cygwin-root cygwin-dir)
-				   (cygwin-bin (concat cygwin-root "/bin")))
-			  (when (and (eq 'windows-nt system-type)
-						 (file-readable-p cygwin-root))
-				
-				(setq exec-path (cons cygwin-bin exec-path))
-				(setenv "PATH" (concat cygwin-bin ";" (getenv "PATH")))
-				
-				;; By default use the Windows HOME.
-				;; Otherwise, uncomment below to set a HOME
-				;;      (setenv "HOME" (concat cygwin-root "/home/eric"))
-				
-				;; NT-emacs assumes a Windows shell. Change to bash.
-				(setq shell-file-name "bash")
-				(setenv "SHELL" shell-file-name) 
-				(setq explicit-shell-file-name shell-file-name) 
-				
-				;; This removes unsightly ^M characters that would otherwise
-				;; appear in the output of java applications.
-				(add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
-				(require 'cygwin-mount)
-				(cygwin-mount-activate)))))))
+			(require 'setup-cygwin)))
 
 ;; regular auto-complete initialization
 (require 'auto-complete-config)

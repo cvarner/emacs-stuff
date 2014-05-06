@@ -133,7 +133,7 @@ determined at activation-time of cygwin-mount \(see
 If nil then the cygwin-binary-directory must be into the PATH."
   :group 'cygwin-mount
   :type '(radio (const :tag "Cygwin is into PATH" :value nil)
-                (directory :tag "Cygwin-Binary-Dir" :value "")))
+                (directory :tag "Cygwin-Binary-Dir" :value cygwin-root-directory)))
 
 (defcustom cygwin-mount-build-mount-table-asynch nil
   "*When non-nil, `cygwin-mount-table' is built at load-time.
